@@ -1,16 +1,10 @@
 package qrcode
 
-// #cgo LDFLAGS: -lzbar -lpng -ljpeg -lz -lrt -lm -pthread
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <png.h>
+// #cgo LDFLAGS: -lzbar
 // #include <zbar.h>
-// #include "get_data.h"
-// typedef zbar_image_cleanup_handler_t *zbar_image_set_data_callback;
 import "C"
 import (
-	"errors"
-	"fmt"
+	"image"
 	"unsafe"
 )
 
@@ -19,23 +13,23 @@ type Result struct {
 	Data       string
 }
 
-func GetDataFromPNG(pngPath string) (results []Result, err error) {
+func ScanImage(img image.Image) (results []Result, err error) {
 
-	pth := C.CString(pngPath)
 	scanner := C.zbar_image_scanner_create()
 	C.zbar_image_scanner_set_config(scanner, 0, C.ZBAR_CFG_ENABLE, 1)
 
 	defer C.zbar_image_scanner_destroy(scanner)
 
-	var width, height C.int = 0, 0
-	var raw unsafe.Pointer = nil
-	errorCode := C.get_data(pth, &width, &height, &raw)
-	if int(errorCode) != 0 {
-		err = errors.New(fmt.Sprintf("Error reading from png file. Error code %d", errorCode))
-		return
-	}
+	rect := img.Bounds()
+	width := rect.Max.X - rect.Min.X
+	height := rect.Max.Y - rect.Min.Y
+	gray := image.NewGray(rect)
 
-	//defer C.free(raw)
+	for x := rect.Min.X; x < rect.Max.X; x++ {
+		for y := rect.Min.Y; y < rect.Max.Y; y++ {
+			gray.Set(x, y, img.At(x, y))
+		}
+	}
 
 	image := C.zbar_image_create()
 
@@ -44,8 +38,7 @@ func GetDataFromPNG(pngPath string) (results []Result, err error) {
 	C.zbar_image_set_format(image, C.ulong(808466521))
 	C.zbar_image_set_size(image, C.uint(width), C.uint(height))
 
-	f := C.zbar_image_set_data_callback(C.zbar_image_free_data)
-	C.zbar_image_set_data(image, raw, C.ulong(width*height), f)
+	C.zbar_image_set_data(image, unsafe.Pointer(&gray.Pix[0]), C.ulong(width*height), nil)
 
 	C.zbar_scan_image(scanner, image)
 
