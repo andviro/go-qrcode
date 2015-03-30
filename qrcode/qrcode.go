@@ -6,7 +6,7 @@ package qrcode
 // #include <png.h>
 // #include <zbar.h>
 // #include "get_data.h"
-// typedef void (*zbar_image_set_data_callback)(zbar_image_t *  image);
+// typedef zbar_image_cleanup_handler_t *zbar_image_set_data_callback;
 import "C"
 import (
 	"errors"
