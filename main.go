@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/shezadkhan137/go-qrcode/qrcode"
+	"github.com/andviro/go-qrcode/qrcode"
 )
 
 var image *string
@@ -17,7 +17,7 @@ func main() {
 
 	flag.Parse()
 
-	results, err := qrcode.GetDataFromPNG(*image)
+	results, err := qrcode.ScanTIFF(*image)
 	if err != nil {
 		panic(err)
 	}

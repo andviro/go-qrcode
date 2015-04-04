@@ -1,3 +1,7 @@
 .vagrant/
 dependencies/
 Vagrantfile
+*.tiff
+*.tif
+*.bin
+go-qrcode
