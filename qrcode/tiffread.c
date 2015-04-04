@@ -31,18 +31,18 @@ int tiffread (const char *name, int *width, int *height, void **raw)
         } else {
             *raw = malloc(npixels);
             if (!*raw) {
-                TIFFClose(tif);
                 free(tmp);
+                TIFFClose(tif);
                 return 3;
             }
             for (i=0; i < npixels; i++) {
                 /*((unsigned char*) *raw)[i] = (unsigned char) (tmp[i].rgba.r * 0.2989 + tmp[i].rgba.g * 0.5870+ tmp[i].rgba.b * 0.1140);*/
-                ((unsigned char*) *raw)[i] = tmp[i].rgba.g;
+                ((unsigned char*) *raw)[i] = tmp[i].rgba.g; // XXX: faster
             }
         }
+        free(tmp);
       }
       TIFFClose(tif);
-      free(tmp);
     } else {
         return 5;
     }
