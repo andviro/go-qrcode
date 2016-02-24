@@ -15,13 +15,15 @@ func init() {
 
 func main() {
 
-	flag.Parse()
+	n := qrcode.DumpTIFF("./multipage_tiff_example.tif")
+	fmt.Println(n)
+	//flag.Parse()
 
-	results, err := qrcode.ScanTIFF(*image)
-	if err != nil {
-		panic(err)
-	}
-	for _, result := range results {
-		fmt.Printf("Symbol Type: %s, Data %s", result.SymbolType, result.Data)
-	}
+	//results, err := qrcode.ScanTIFF(*image)
+	//if err != nil {
+	//panic(err)
+	//}
+	//for _, result := range results {
+	//fmt.Printf("Symbol Type: %s, Data %s", result.SymbolType, result.Data)
+	//}
 }

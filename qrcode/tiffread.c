@@ -48,3 +48,20 @@ int tiffread (const char *name, int *width, int *height, void **raw)
     }
   return 0;
 }
+
+int test_dir(const char *name)
+{
+    TIFF* tif = TIFFOpen(name, "r");
+    int dircount = -1, width, height;
+    if (tif) {
+        dircount = 0;
+        do {
+            TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
+            TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
+            dircount++;
+            printf("%i x %i\n", width, height);
+        } while (TIFFReadDirectory(tif));
+        TIFFClose(tif);
+    }
+    return dircount;
+}

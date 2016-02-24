@@ -1,6 +1,7 @@
 package qrcode
 
-// #cgo LDFLAGS: -lzbar -ltiff
+// #cgo !windows LDFLAGS: -lzbar -ltiff
+// #cgo windows LDFLAGS: -lzbar -ltiff -liconv
 // #include <zbar.h>
 // #include "tiffread.h"
 // typedef zbar_image_cleanup_handler_t *zbar_image_set_data_callback;
@@ -16,6 +17,12 @@ import (
 type Result struct {
 	SymbolType string
 	Data       string
+}
+
+func DumpTIFF(imgPath string) int {
+	pth := C.CString(imgPath)
+	res := C.test_dir(pth)
+	return int(res)
 }
 
 func ScanTIFF(imgPath string) (results []Result, err error) {
